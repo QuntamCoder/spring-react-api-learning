@@ -1,17 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 
-function AddStudent() {
-  const [formData, setFormData] = React.useState({
-    address: '',
+function AddStudent({ onStudentAdded }) {
+  const [formData, setFormData] = useState({
+    name: '',
     std: '',
-    name: ''
+    address: ''
   });
 
+  // ✅ This is the missing function!
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
+    setFormData(prev => ({
+      ...prev,
       [name]: value
     }));
   };
@@ -19,42 +20,44 @@ function AddStudent() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8080/addStudent', formData);
-      if (response.status === 200) {
-        console.log('Student added successfully:', response.data);
+      await axios.post('http://localhost:8080/addStudent', formData);
+      if (onStudentAdded) {
+        onStudentAdded(); // Refresh the list in parent
       }
+      setFormData({ name: '', std: '', address: '' }); // Clear form
     } catch (error) {
       console.error('Error adding student:', error);
     }
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-<input
-  type="text"
-  name="name"
-  value={formData.name}
-  onChange={handleChange}
-  placeholder="Enter Name"
-/>
-<input
-  type="text"
-  name="address"
-  value={formData.address}
-  onChange={handleChange}
-  placeholder="Enter Address"
-/>
-<input
-  type="text"
-  name="std"
-  value={formData.std}
-  onChange={handleChange}
-  placeholder="Enter Standard"
-/>
-        <button type="submit">Add Student</button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <input
+        type="text"
+        name="name"
+        value={formData.name}
+        onChange={handleChange}
+        placeholder="Enter Name"
+        required
+      />
+      <input
+        type="text"
+        name="std"
+        value={formData.std}
+        onChange={handleChange}
+        placeholder="Enter Standard"
+        required
+      />
+      <input
+        type="text"
+        name="address"
+        value={formData.address}
+        onChange={handleChange}
+        placeholder="Enter Address"
+        required
+      />
+      <button type="submit">Add Student</button>
+    </form>
   );
 }
 
