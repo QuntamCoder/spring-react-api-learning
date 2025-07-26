@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-function GetStudent({ students, onDelete }) {
+function GetStudent({ students, onDelete, onEdit }) {
   const DeleteStudent = async (rollNo) => {
     try {
       await axios.delete(`http://localhost:8080/deleteStudent/${rollNo}`);
-      onDelete(); // ✅ Trigger refresh
+      onDelete();
     } catch (error) {
       console.error('Error deleting student:', error);
     }
@@ -30,6 +30,7 @@ function GetStudent({ students, onDelete }) {
             <td>{student.std}</td>
             <td>
               <button onClick={() => DeleteStudent(student.rollNo)}>Delete</button>
+              <button onClick={() => onEdit(student.rollNo)}>Edit</button>
             </td>
           </tr>
         ))}
@@ -37,5 +38,5 @@ function GetStudent({ students, onDelete }) {
     </table>
   );
 }
-export default GetStudent;
 
+export default GetStudent;
